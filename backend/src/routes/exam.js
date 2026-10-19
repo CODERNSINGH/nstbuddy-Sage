@@ -8,7 +8,8 @@ const router = Router()
 router.post('/login', async (req, res) => {
   const { email, password } = req.body
   const [row] = await query(
-    `SELECT r.id, r.name, r.contest_id, c.title, c.duration_minutes
+    `SELECT r.id, r.name, r.contest_id, c.title, c.description, c.duration_minutes,
+            (SELECT count(*) FROM questions q WHERE q.contest_id = c.id) AS question_count
      FROM registrations r JOIN contests c ON c.id = r.contest_id
      WHERE r.email = $1 AND r.access_code = $2`,
     [(email || '').trim().toLowerCase(), (password || '').trim().toUpperCase()],
@@ -18,7 +19,12 @@ router.post('/login', async (req, res) => {
   res.json({
     token: signToken({ id: row.id, contestId: row.contest_id, role: 'student' }, '12h'),
     student: { name: row.name },
-    contest: { title: row.title, durationMinutes: row.duration_minutes },
+    contest: {
+      title: row.title,
+      description: row.description,
+      durationMinutes: row.duration_minutes,
+      questionCount: Number(row.question_count),
+    },
   })
 })
 

@@ -5,6 +5,7 @@ import authRoutes from './routes/auth.js'
 import contestRoutes from './routes/contests.js'
 import publicRoutes from './routes/public.js'
 import examRoutes from './routes/exam.js'
+import { checkMail } from './utils/mailer.js'
 
 const app = express()
 app.use(cors())
@@ -21,4 +22,7 @@ app.use((err, req, res, next) => {
   res.status(500).json({ error: 'Something went wrong on the server' })
 })
 
-app.listen(config.port, () => console.log(`Backend running on http://localhost:${config.port}`))
+app.listen(config.port, () => {
+  console.log(`Backend running on http://localhost:${config.port}`)
+  checkMail()
+})
