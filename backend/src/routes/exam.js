@@ -1,6 +1,7 @@
 import { Router } from 'express'
 import { query } from '../db/pool.js'
 import { requireStudent, signToken } from '../middleware/auth.js'
+import { shuffledOrder } from '../utils/helpers.js'
 
 // Used by the Electron exam app
 const router = Router()
@@ -57,7 +58,12 @@ router.post('/start', requireStudent, async (req, res) => {
     endsAt, // ms timestamp; the app counts down to this
     serverNow: Date.now(),
     answers: attempt.answers, // so a restarted app can continue
-    questions, // correct answers are NOT sent
+    // Correct answers are NOT sent. Options come shuffled per student:
+    // `order[i]` is the original index of the option shown at position i.
+    questions: questions.map((q) => {
+      const order = shuffledOrder(q.options.length, req.user.id * 100003 + q.id)
+      return { id: q.id, text: q.text, options: order.map((i) => q.options[i]), order }
+    }),
   })
 })
 

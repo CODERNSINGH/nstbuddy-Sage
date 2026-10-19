@@ -171,11 +171,13 @@ export default function QuizScreen({ session, streams, onFinish, onScreenLost })
 
           <div className="mt-8 space-y-3.5">
             {question.options.map((option, i) => {
-              const selected = answers[question.id] === i
+              // Options are shuffled by the server; answers are stored by ORIGINAL index
+              const original = question.order[i]
+              const selected = answers[question.id] === original
               return (
                 <button
                   key={i}
-                  onClick={() => saveAnswers({ ...answers, [question.id]: i })}
+                  onClick={() => saveAnswers({ ...answers, [question.id]: original })}
                   className={`flex w-full items-center gap-4 rounded-2xl border px-5 py-4 text-left text-lg transition ${
                     selected ? 'border-brand bg-brand-soft' : 'border-line hover:border-slate-300 hover:bg-slate-50'
                   }`}

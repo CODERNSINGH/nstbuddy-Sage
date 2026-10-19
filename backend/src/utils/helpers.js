@@ -25,3 +25,23 @@ export function validateQuestion(q) {
     return 'correctIndex must be 0, 1, 2 or 3'
   return null
 }
+
+// Same seed -> same shuffle, so a student sees the same option order if the app restarts.
+// Returns the ORIGINAL indexes in shuffled order, e.g. [2, 0, 3, 1].
+export function shuffledOrder(length, seed) {
+  let state = seed >>> 0
+  const random = () => {
+    // mulberry32: tiny seeded random number generator
+    state = (state + 0x6d2b79f5) >>> 0
+    let t = state
+    t = Math.imul(t ^ (t >>> 15), t | 1)
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61)
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296
+  }
+  const order = Array.from({ length }, (_, i) => i)
+  for (let i = length - 1; i > 0; i--) {
+    const j = Math.floor(random() * (i + 1))
+    ;[order[i], order[j]] = [order[j], order[i]]
+  }
+  return order
+}
