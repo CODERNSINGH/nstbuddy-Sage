@@ -21,7 +21,7 @@ async function findContest(slug) {
 router.get('/downloads/:slug', async (req, res) => {
   const [admin] = await query('SELECT name, club_name FROM admins WHERE download_slug = $1', [req.params.slug])
   if (!admin) return res.status(404).json({ error: 'This download link is not valid' })
-  res.json({ clubName: admin.club_name, adminName: admin.name, downloads: config.downloads })
+  res.json({ clubName: admin.club_name, adminName: admin.name, download: config.downloadUrl })
 })
 
 router.get('/contests/:slug', async (req, res) => {
@@ -35,7 +35,7 @@ router.get('/contests/:slug', async (req, res) => {
       durationMinutes: c.duration_minutes,
       questionCount: Number(c.question_count),
     },
-    downloads: config.downloads,
+    download: config.downloadUrl,
   })
 })
 

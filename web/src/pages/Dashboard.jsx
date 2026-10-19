@@ -58,11 +58,12 @@ export default function Dashboard() {
         ))}
       </div>
 
+      {admin.downloadSlug && (
       <Card className="mt-6 flex flex-wrap items-center gap-4 p-5">
         <IconBox icon={Download} className="bg-accent-soft text-accent" />
         <div className="min-w-0 flex-1">
           <p className="font-bold">App download link</p>
-          <p className="text-sm text-slate-500">Share anytime. Opens a page where students can only download the Mac app (Apple Silicon or Intel).</p>
+          <p className="text-sm text-slate-500">Share anytime. Opens a page where students can only download the Mac app (Apple Silicon).</p>
         </div>
         <div className="flex w-full gap-2 sm:w-auto">
           <input readOnly value={downloadLink} className="min-w-0 flex-1 rounded-xl border border-line bg-slate-50 px-3.5 py-2.5 text-sm sm:w-72" />
@@ -71,6 +72,7 @@ export default function Dashboard() {
           </Button>
         </div>
       </Card>
+      )}
 
       <h2 className="mb-4 mt-12 text-xl font-bold tracking-tight">All contests</h2>
       {contests === null && <p className="text-slate-500">Loading...</p>}

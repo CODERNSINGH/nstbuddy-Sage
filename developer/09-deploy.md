@@ -14,11 +14,12 @@
   For local development put `VITE_API_URL=http://localhost:4000` in `.env` (git ignored).
   Production builds always use `.env.production`.
 
-## Mac app downloads
-- Build installers: `cd app && npm run dist` -> `app/release/NstBuddy-Sage-arm64.dmg` (Apple Silicon) and `NstBuddy-Sage-x64.dmg` (Intel).
-- Upload both to a **GitHub Release** of this repo. Keep these exact file names; the default download URLs are
-  `https://github.com/CODERNSINGH/nstbuddy-Sage/releases/latest/download/<file>`.
-  To host elsewhere set `DOWNLOAD_URL_ARM64` / `DOWNLOAD_URL_INTEL` on the backend.
-- Two ways students get the app, both shown with Apple Silicon / Intel buttons:
-  1. The contest registration link `/c/<contest>` (download section at the bottom).
-  2. Each admin's **download-only link** `/d/<code>`, shown on the dashboard ("App download link"). Share it anytime.
+## Mac app download (Apple Silicon only)
+- Build: `cd app && npm run dist` -> `app/release/NstBuddy-Sage-arm64.dmg`.
+- Upload it to Cloudflare R2 and enable **public access** (r2.dev URL or custom domain).
+  The `<account>.r2.cloudflarestorage.com` address is the private S3 API and cannot be used for downloads.
+- Set the public file URL as `DOWNLOAD_URL` on the backend (Render env). Default fallback: GitHub Release `NstBuddy-Sage-arm64.dmg`.
+- Where students get it:
+  1. On the contest link `/c/<contest>` **after they register** (or if they were already registered).
+  2. Each admin's **download-only link** `/d/<code>` (dashboard, "App download link"). Share it anytime.
+- If the dashboard has no download card or the link shows `undefined`, the backend is running old code: redeploy it.

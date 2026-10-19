@@ -10,7 +10,8 @@ import { Button, Card, ErrorText, Field, IconBox, Label, Logo } from '../compone
 export default function RegisterPage() {
   const { slug } = useParams()
   const [contest, setContest] = useState(null)
-  const [downloads, setDownloads] = useState(null)
+  const [downloadUrl, setDownloadUrl] = useState('')
+  const [already, setAlready] = useState(false) // email was registered before
   const [form, setForm] = useState({ name: '', mobile: '', email: '', college: '', note: '' })
   const [error, setError] = useState('')
   const [done, setDone] = useState(false)
@@ -20,7 +21,7 @@ export default function RegisterPage() {
     api(`/public/contests/${slug}`)
       .then((d) => {
         setContest(d.contest)
-        setDownloads(d.downloads)
+        setDownloadUrl(d.download)
       })
       .catch((err) => setError(err.message))
   }, [slug])
@@ -36,6 +37,7 @@ export default function RegisterPage() {
       setDone(true)
     } catch (err) {
       setError(err.message)
+      if (err.status === 409) setAlready(true)
     } finally {
       setBusy(false)
     }
@@ -76,7 +78,7 @@ export default function RegisterPage() {
                   <CheckCircle2 className="mx-auto text-accent" size={40} />
                   <p className="mt-3 text-xl font-bold text-accent-dark">You are registered!</p>
                   <p className="mt-1 text-sm text-slate-600">
-                    We emailed you a unique password. Open the NstBuddy exam app on your Mac and login with your email and that password.
+                    We emailed you a unique password. Download the app below, open it and login with your email and that password.
                   </p>
                 </div>
               ) : (
@@ -95,9 +97,9 @@ export default function RegisterPage() {
                 </form>
               )}
 
-              {downloads && (
+              {(done || already) && downloadUrl && (
                 <div className="mt-8 border-t border-line pt-7">
-                  <DownloadCard downloads={downloads} />
+                  <DownloadCard url={downloadUrl} />
                 </div>
               )}
             </>

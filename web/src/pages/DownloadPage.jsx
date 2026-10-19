@@ -32,7 +32,7 @@ export default function DownloadPage() {
                 <h1 className="mt-1 text-3xl font-extrabold tracking-tight">Get the NstBuddy Sage app</h1>
                 <p className="mt-2 text-slate-600">Install this app on your MacBook to attend proctored quizzes. You login with the email and password sent to your inbox.</p>
               </div>
-              <DownloadCard downloads={data.downloads} />
+              <DownloadCard url={data.download} />
             </>
           )}
         </Card>
