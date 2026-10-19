@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { api, setToken } from '../lib/api.js'
-import { Button, Card, Logo } from '../components/ui.jsx'
+import { Button, Card, ErrorText, Field, Logo } from '../components/ui.jsx'
 
 export default function LoginScreen({ onLogin }) {
   const [email, setEmail] = useState('')
@@ -23,29 +23,31 @@ export default function LoginScreen({ onLogin }) {
     }
   }
 
-  const input = 'mt-1 w-full rounded-xl border border-slate-300 px-3 py-2.5 outline-none focus:border-brand focus:ring-2 focus:ring-brand/20'
-
   return (
-    <div className="grid min-h-screen place-items-center bg-ink px-4">
-      <Card className="w-full max-w-md">
-        <Logo />
-        <h1 className="mt-6 text-2xl font-bold">Student exam login</h1>
-        <p className="mt-1 text-sm text-slate-500">Use the email and password we sent to your inbox.</p>
-        <form onSubmit={submit} className="mt-6 space-y-4">
-          <label className="block text-sm font-medium">
-            Email
-            <input className={input} type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-          </label>
-          <label className="block text-sm font-medium">
-            Password
-            <input className={`${input} font-mono uppercase`} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="XXXX-XXXX-XXXX" required />
-          </label>
-          {error && <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">{error}</p>}
-          <Button className="w-full" disabled={busy}>
-            {busy ? 'Checking...' : 'Login'}
-          </Button>
-        </form>
-      </Card>
+    <div className="grid min-h-screen place-items-center bg-gradient-to-b from-brand-soft via-white to-white px-4">
+      <div className="w-full max-w-md">
+        <div className="mb-8 flex justify-center"><Logo className="h-10" /></div>
+        <Card className="p-8 shadow-xl shadow-slate-200/60">
+          <h1 className="text-2xl font-extrabold tracking-tight">Student exam login</h1>
+          <p className="mt-1 text-sm text-slate-500">Use the email and password we sent to your inbox.</p>
+          <form onSubmit={submit} className="mt-6 space-y-4">
+            <Field label="Email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+            <Field
+              label="Password"
+              className="font-mono uppercase tracking-wider"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="XXXX-XXXX-XXXX"
+              required
+            />
+            <ErrorText>{error}</ErrorText>
+            <Button variant="green" size="lg" className="w-full" disabled={busy}>
+              {busy ? 'Checking...' : 'Login'}
+            </Button>
+          </form>
+        </Card>
+        <p className="mt-5 text-center text-xs text-slate-400">Proctored exam. Screen and camera will be required.</p>
+      </div>
     </div>
   )
 }
