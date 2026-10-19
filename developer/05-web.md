@@ -13,7 +13,7 @@ web/src/
 | --- | --- |
 | `/signup`, `/login` | Admin account (name, club name, email, password) |
 | `/` | Dashboard: list contests, create a contest |
-| `/contests/:id` | Share link, Questions / Students (live) / Leaderboard tabs |
+| `/contests/:id` | Share link, Questions / Students (live) / **Monitor (live screen + camera)** / Leaderboard tabs |
 | `/c/:slug` | **Public** student registration page |
 
 Another teacher? Just sign up with another email - each admin only sees their own contests.

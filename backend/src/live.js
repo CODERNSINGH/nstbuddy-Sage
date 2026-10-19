@@ -55,8 +55,21 @@ export function attachLive(server) {
     } else {
       client.adminId = user.id
     }
+    // One app per student: a reconnect replaces the old (possibly dead) connection
+    if (client.role === 'student') {
+      for (const [oldId, old] of clients) {
+        if (old.role === 'student' && old.studentId === client.studentId) {
+          old.ws.terminate()
+          clients.delete(oldId)
+        }
+      }
+    }
     clients.set(connId, client)
     if (client.role === 'student') broadcastOnline(client.contestId)
+
+    // Heartbeat: a connection that does not answer pings is dead
+    client.alive = true
+    ws.on('pong', () => (client.alive = true))
 
     ws.on('message', async (raw) => {
       let msg
@@ -89,8 +102,19 @@ export function attachLive(server) {
     })
 
     ws.on('close', () => {
+      if (clients.get(connId) !== client) return // already replaced
       clients.delete(connId)
       if (client.role === 'student') broadcastOnline(client.contestId)
     })
   })
+
+  setInterval(() => {
+    for (const client of clients.values()) {
+      if (!client.alive) client.ws.terminate() // triggers 'close' above
+      else {
+        client.alive = false
+        client.ws.ping()
+      }
+    }
+  }, 15000)
 }

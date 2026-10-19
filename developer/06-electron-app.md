@@ -23,3 +23,8 @@ Electron cannot fully stop OS-level gestures (e.g. some Mission Control / force-
 
 ## macOS permissions
 First run: allow **Screen Recording** and **Camera** for the app in System Settings > Privacy & Security, then restart the app.
+
+## Live feed + app icon
+- `src/lib/broadcast.js` sends the screen + camera to an admin who clicks "Watch live" (WebRTC). Starts when the quiz starts, stops when it ends. Nothing is stored.
+- Options are shown in the order the server shuffled them (`question.order` maps each shown option back to its original index).
+- App icon: `app/build/icon.png` and `icon.icns` (from `assests/logo_for_app.png`), used for the dock and window. The web favicon uses the same logo.

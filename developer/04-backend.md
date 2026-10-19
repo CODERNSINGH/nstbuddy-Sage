@@ -20,6 +20,8 @@ backend/src/
 - `GET /:id/registrations`, `POST /:id/registrations/:regId/resend`
 - `GET /:id/leaderboard` (score desc, then faster time)
 
+**Live monitoring** `ws://host/ws?token=...` (see 02-architecture.md). File: `src/live.js`.
+
 **Public** `/api/public/contests/:slug` (`GET`) and `/register` (`POST`)
 
 **Exam (student token)** `/api/exam`: `POST /login`, `POST /start`, `PUT /progress`, `POST /violation`, `POST /submit`
