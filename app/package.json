@@ -7,21 +7,49 @@
   "scripts": {
     "dev": "concurrently -k \"vite\" \"wait-on tcp:5174 && ELECTRON_DEV=1 electron .\"",
     "build": "vite build",
-    "start": "vite build && electron ."
-  },
-  "dependencies": {
-    "@fontsource-variable/inter": "^5.3.0",
-    "@tailwindcss/vite": "^4.3.3",
-    "lucide-react": "^1.59.0",
-    "react": "^19.3.1",
-    "react-dom": "^19.3.1",
-    "tailwindcss": "^4.3.3"
+    "start": "vite build && electron .",
+    "dist": "vite build && electron-builder --mac dmg --arm64 --x64"
   },
   "devDependencies": {
+    "@fontsource-variable/inter": "^5.3.0",
+    "@tailwindcss/vite": "^4.3.3",
     "@vitejs/plugin-react": "^6.1.2",
     "concurrently": "^10.0.6",
     "electron": "^44.9.0",
+    "electron-builder": "^26.15.3",
+    "lucide-react": "^1.59.0",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "tailwindcss": "^4.3.3",
     "vite": "^8.3.4",
     "wait-on": "^9.5.1"
+  },
+  "description": "NstBuddy Sage proctored exam app",
+  "author": "NstBuddy",
+  "build": {
+    "appId": "com.nstbuddy.sage",
+    "productName": "NstBuddy Sage",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist/**/*",
+      "electron/**/*",
+      "build/icon.png",
+      "package.json"
+    ],
+    "mac": {
+      "target": "dmg",
+      "icon": "build/icon.icns",
+      "category": "public.app-category.education",
+      "identity": null,
+      "extendInfo": {
+        "NSCameraUsageDescription": "NstBuddy Sage needs your camera to proctor the exam.",
+        "NSScreenCaptureUsageDescription": "NstBuddy Sage needs to share your screen to proctor the exam."
+      }
+    },
+    "dmg": {
+      "title": "NstBuddy Sage"
+    }
   }
 }
