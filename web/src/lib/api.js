@@ -1,4 +1,4 @@
-export const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000'
+export const API_URL = import.meta.env.VITE_API_URL || 'https://nstbuddy-sage.onrender.com'
 
 export const getToken = () => localStorage.getItem('token')
 export const setToken = (token) =>

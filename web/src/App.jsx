@@ -5,6 +5,7 @@ import AuthPage from './pages/AuthPage.jsx'
 import Dashboard from './pages/Dashboard.jsx'
 import ContestPage from './pages/ContestPage.jsx'
 import RegisterPage from './pages/RegisterPage.jsx'
+import DownloadPage from './pages/DownloadPage.jsx'
 
 // Pages that need a logged-in admin share the navbar
 function AdminLayout({ children }) {
@@ -25,6 +26,7 @@ export default function App() {
       <Route path="/login" element={<AuthPage mode="login" />} />
       <Route path="/signup" element={<AuthPage mode="signup" />} />
       <Route path="/c/:slug" element={<RegisterPage />} />
+      <Route path="/d/:slug" element={<DownloadPage />} />
       <Route path="/" element={<AdminLayout><Dashboard /></AdminLayout>} />
       <Route path="/contests/:id" element={<AdminLayout><ContestPage /></AdminLayout>} />
     </Routes>

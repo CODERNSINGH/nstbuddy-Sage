@@ -3,12 +3,14 @@ import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { api } from '../lib/api.js'
 import Banner from '../components/Banner.jsx'
+import DownloadCard from '../components/DownloadCard.jsx'
 import { Button, Card, ErrorText, Field, IconBox, Label, Logo } from '../components/ui.jsx'
 
 // Public page: students open the share link /c/:slug and sign up here
 export default function RegisterPage() {
   const { slug } = useParams()
   const [contest, setContest] = useState(null)
+  const [downloads, setDownloads] = useState(null)
   const [form, setForm] = useState({ name: '', mobile: '', email: '', college: '', note: '' })
   const [error, setError] = useState('')
   const [done, setDone] = useState(false)
@@ -16,7 +18,10 @@ export default function RegisterPage() {
 
   useEffect(() => {
     api(`/public/contests/${slug}`)
-      .then((d) => setContest(d.contest))
+      .then((d) => {
+        setContest(d.contest)
+        setDownloads(d.downloads)
+      })
       .catch((err) => setError(err.message))
   }, [slug])
 
@@ -88,6 +93,12 @@ export default function RegisterPage() {
                     {busy ? 'Registering...' : 'Register'}
                   </Button>
                 </form>
+              )}
+
+              {downloads && (
+                <div className="mt-8 border-t border-line pt-7">
+                  <DownloadCard downloads={downloads} />
+                </div>
               )}
             </>
           )}

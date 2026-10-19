@@ -1,4 +1,4 @@
-import { BookOpen, Clock, Plus, Trophy, Users } from 'lucide-react'
+import { BookOpen, Check, Clock, Copy, Download, Plus, Trophy, Users } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { api } from '../lib/api.js'
@@ -13,6 +13,14 @@ export default function Dashboard() {
   const { admin } = useAuth()
   const [contests, setContests] = useState(null)
   const [creating, setCreating] = useState(false)
+  const [copied, setCopied] = useState(false)
+  const downloadLink = `${window.location.origin}/d/${admin.downloadSlug}`
+
+  async function copyDownloadLink() {
+    await navigator.clipboard.writeText(downloadLink)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 1500)
+  }
 
   const load = () => api('/contests').then((d) => setContests(d.contests))
   useEffect(() => {
@@ -49,6 +57,20 @@ export default function Dashboard() {
           </Card>
         ))}
       </div>
+
+      <Card className="mt-6 flex flex-wrap items-center gap-4 p-5">
+        <IconBox icon={Download} className="bg-accent-soft text-accent" />
+        <div className="min-w-0 flex-1">
+          <p className="font-bold">App download link</p>
+          <p className="text-sm text-slate-500">Share anytime. Opens a page where students can only download the Mac app (Apple Silicon or Intel).</p>
+        </div>
+        <div className="flex w-full gap-2 sm:w-auto">
+          <input readOnly value={downloadLink} className="min-w-0 flex-1 rounded-xl border border-line bg-slate-50 px-3.5 py-2.5 text-sm sm:w-72" />
+          <Button variant={copied ? 'green' : 'dark'} onClick={copyDownloadLink}>
+            {copied ? <Check size={16} /> : <Copy size={16} />} {copied ? 'Copied' : 'Copy'}
+          </Button>
+        </div>
+      </Card>
 
       <h2 className="mb-4 mt-12 text-xl font-bold tracking-tight">All contests</h2>
       {contests === null && <p className="text-slate-500">Loading...</p>}
