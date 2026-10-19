@@ -1,6 +1,7 @@
 import { ChevronLeft, ChevronRight, LayoutGrid, Timer } from 'lucide-react'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { api } from '../lib/api.js'
+import { startBroadcast } from '../lib/broadcast.js'
 import { desktop } from '../lib/desktop.js'
 import { Button, Card, Label } from '../components/ui.jsx'
 
@@ -78,6 +79,9 @@ export default function QuizScreen({ session, streams, onFinish, onScreenLost })
       screenTrack.removeEventListener('ended', onEnded)
     }
   }, [streams, onScreenLost])
+
+  // Let the teacher watch our screen + camera live while the exam runs
+  useEffect(() => startBroadcast(streams), [streams])
 
   useEffect(() => {
     if (videoRef.current) videoRef.current.srcObject = streams.camera

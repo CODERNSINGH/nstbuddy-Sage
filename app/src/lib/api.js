@@ -1,7 +1,8 @@
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000'
+export const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000'
 
 let token = null // kept in memory only: closing the app logs the student out
 export const setToken = (value) => (token = value)
+export const getToken = () => token
 
 export async function api(path, { method = 'GET', body } = {}) {
   const res = await fetch(`${API_URL}/api/exam${path}`, {
