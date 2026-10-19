@@ -2,7 +2,7 @@ import { Router } from 'express'
 import { query } from '../db/pool.js'
 import { requireAdmin } from '../middleware/auth.js'
 import { makeSlug } from '../utils/helpers.js'
-import { sendCredentials } from '../utils/mailer.js'
+import { deliverCredentials } from '../utils/mailer.js'
 import questionRoutes from './questions.js'
 
 const router = Router()
@@ -90,7 +90,7 @@ router.delete('/:id', findOwnContest, async (req, res) => {
 // ---- Students who registered (the web page polls this to show "live" signups)
 router.get('/:id/registrations', findOwnContest, async (req, res) => {
   const rows = await query(
-    `SELECT r.id, r.name, r.mobile, r.email, r.college, r.note, r.created_at,
+    `SELECT r.id, r.name, r.mobile, r.email, r.college, r.note, r.created_at, r.mail_status, r.mail_error,
             a.started_at, a.submitted_at, a.score, a.total
      FROM registrations r LEFT JOIN attempts a ON a.registration_id = r.id
      WHERE r.contest_id = $1 ORDER BY r.created_at DESC`,
@@ -105,6 +105,8 @@ router.get('/:id/registrations', findOwnContest, async (req, res) => {
       college: r.college,
       note: r.note,
       registeredAt: r.created_at,
+      mailStatus: r.mail_status,
+      mailError: r.mail_error,
       status: r.submitted_at ? 'submitted' : r.started_at ? 'writing' : 'registered',
       score: r.score,
       total: r.total,
@@ -118,7 +120,8 @@ router.post('/:id/registrations/:regId/resend', findOwnContest, async (req, res)
     [req.params.regId, req.contest.id],
   )
   if (!registration) return res.status(404).json({ error: 'Student not found' })
-  await sendCredentials({ registration, contest: req.contest })
+  const result = await deliverCredentials({ registration, contest: req.contest }, query)
+  if (!result.sent) return res.status(502).json({ error: `Email failed: ${result.error}` })
   res.json({ ok: true })
 })
 

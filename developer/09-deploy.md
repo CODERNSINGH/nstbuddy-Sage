@@ -23,3 +23,13 @@
   1. On the contest link `/c/<contest>` **after they register** (or if they were already registered).
   2. Each admin's **download-only link** `/d/<code>` (dashboard, "App download link"). Share it anytime.
 - If the dashboard has no download card or the link shows `undefined`, the backend is running old code: redeploy it.
+
+## Email on Render
+Render **free** instances block outbound SMTP ports (25, 465, 587), so Gmail SMTP works on your laptop but times out on Render.
+Pick one:
+1. **Resend (easiest, HTTPS):** create an API key at resend.com, verify your domain, set `RESEND_API_KEY` and `MAIL_FROM="NstBuddy Sage <no-reply@yourdomain>"` on Render.
+2. **SMTP on port 2525** (e.g. Brevo): `SMTP_HOST=smtp-relay.brevo.com`, `SMTP_PORT=2525`, `SMTP_USER`, `SMTP_PASS`.
+3. A paid Render instance (SMTP ports open) with the Gmail settings.
+
+The Students tab shows **mail sent / mail failed** per student (hover a failed one for the reason) and a Resend button.
+Registration still succeeds if the mail fails; the student is told to ask the teacher to resend.

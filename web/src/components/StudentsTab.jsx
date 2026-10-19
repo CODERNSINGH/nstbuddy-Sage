@@ -4,6 +4,7 @@ import { api } from '../lib/api.js'
 import { Button, Card, Pill } from './ui.jsx'
 
 const tones = { registered: 'gray', writing: 'amber', submitted: 'green' }
+const mailTones = { sent: 'green', failed: 'red', pending: 'gray' }
 
 // Refreshes every 5 seconds so the teacher sees signups arrive "live"
 export default function StudentsTab({ contestId }) {
@@ -18,9 +19,14 @@ export default function StudentsTab({ contestId }) {
   }, [contestId])
 
   async function resend(id) {
-    await api(`/contests/${contestId}/registrations/${id}/resend`, { method: 'POST' })
-    setMessage('Password email sent')
-    setTimeout(() => setMessage(''), 2500)
+    try {
+      await api(`/contests/${contestId}/registrations/${id}/resend`, { method: 'POST' })
+      setMessage('Password email sent')
+    } catch (err) {
+      setMessage(err.message) // e.g. "Email failed: Connection timeout"
+    }
+    api(`/contests/${contestId}/registrations`).then((d) => setStudents(d.registrations))
+    setTimeout(() => setMessage(''), 6000)
   }
 
   return (
@@ -32,13 +38,13 @@ export default function StudentsTab({ contestId }) {
             <span className="h-2 w-2 animate-pulse rounded-full bg-accent" /> Live
           </span>
         </div>
-        <span className="text-sm font-medium text-accent-dark">{message}</span>
+        <span className="max-w-md truncate text-sm font-medium text-accent-dark" title={message}>{message}</span>
       </div>
       <div className="overflow-x-auto">
         <table className="w-full text-left text-sm">
           <thead className="bg-slate-50 text-[11px] uppercase tracking-widest text-slate-500">
             <tr>
-              {['Name', 'Email', 'Mobile', 'College', 'Status', 'Score', ''].map((h) => (
+              {['Name', 'Email', 'Mobile', 'College', 'Status', 'Mail', 'Score', ''].map((h) => (
                 <th key={h} className="px-5 py-3 font-semibold">{h}</th>
               ))}
             </tr>
@@ -51,6 +57,7 @@ export default function StudentsTab({ contestId }) {
                 <td className="px-5 py-3 text-slate-600">{s.mobile}</td>
                 <td className="px-5 py-3 text-slate-600">{s.college}</td>
                 <td className="px-5 py-3"><Pill tone={tones[s.status]}>{s.status}</Pill></td>
+                <td className="px-5 py-3" title={s.mailError}><Pill tone={mailTones[s.mailStatus]}>{s.mailStatus === 'sent' ? 'mail sent' : s.mailStatus === 'failed' ? 'mail failed' : 'mail pending'}</Pill></td>
                 <td className="px-5 py-3 font-semibold">{s.score === null ? '-' : `${s.score}/${s.total}`}</td>
                 <td className="px-5 py-3 text-right">
                   <Button variant="ghost" size="sm" onClick={() => resend(s.id)}><Mail size={14} /> Resend</Button>
@@ -58,7 +65,7 @@ export default function StudentsTab({ contestId }) {
               </tr>
             ))}
             {!students.length && (
-              <tr><td colSpan="7" className="px-5 py-12 text-center text-slate-500">Nobody yet. Share the link!</td></tr>
+              <tr><td colSpan="8" className="px-5 py-12 text-center text-slate-500">Nobody yet. Share the link!</td></tr>
             )}
           </tbody>
         </table>

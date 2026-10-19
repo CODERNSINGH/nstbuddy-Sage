@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { api } from '../lib/api.js'
+import { DEFAULT_DOWNLOAD_URL } from '../lib/config.js'
 import Banner from '../components/Banner.jsx'
 import DownloadCard from '../components/DownloadCard.jsx'
 import { Card, ErrorText, Label, Logo } from '../components/ui.jsx'
@@ -32,7 +33,7 @@ export default function DownloadPage() {
                 <h1 className="mt-1 text-3xl font-extrabold tracking-tight">Get the NstBuddy Sage app</h1>
                 <p className="mt-2 text-slate-600">Install this app on your MacBook to attend proctored quizzes. You login with the email and password sent to your inbox.</p>
               </div>
-              <DownloadCard url={data.download} />
+              <DownloadCard url={data.download || DEFAULT_DOWNLOAD_URL} />
             </>
           )}
         </Card>

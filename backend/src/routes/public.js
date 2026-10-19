@@ -1,7 +1,7 @@
 import { Router } from 'express'
 import { query } from '../db/pool.js'
 import { isEmail, makeAccessCode } from '../utils/helpers.js'
-import { sendCredentials } from '../utils/mailer.js'
+import { deliverCredentials } from '../utils/mailer.js'
 import { config } from '../config.js'
 
 // No login needed: this is what students see when they open the share link
@@ -61,10 +61,9 @@ router.post('/contests/:slug/register', async (req, res) => {
     [contest.id, name.trim(), mobile.trim(), cleanEmail, college.trim(), note.trim(), makeAccessCode()],
   )
 
-  // Don't fail the signup if the mail server is down; admin can press "resend"
-  sendCredentials({ registration, contest }).catch((err) => console.error('Mail failed:', err.message))
-
-  res.status(201).json({ ok: true })
+  // Registration always succeeds; we just report whether the email went out
+  const { sent } = await deliverCredentials({ registration, contest }, query)
+  res.status(201).json({ ok: true, emailSent: sent })
 })
 
 export default router

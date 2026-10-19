@@ -2,6 +2,7 @@ import { CheckCircle2, ClipboardList, Clock, HelpCircle } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { api } from '../lib/api.js'
+import { DEFAULT_DOWNLOAD_URL } from '../lib/config.js'
 import Banner from '../components/Banner.jsx'
 import DownloadCard from '../components/DownloadCard.jsx'
 import { Button, Card, ErrorText, Field, IconBox, Label, Logo } from '../components/ui.jsx'
@@ -10,18 +11,19 @@ import { Button, Card, ErrorText, Field, IconBox, Label, Logo } from '../compone
 export default function RegisterPage() {
   const { slug } = useParams()
   const [contest, setContest] = useState(null)
-  const [downloadUrl, setDownloadUrl] = useState('')
+  const [downloadUrl, setDownloadUrl] = useState(DEFAULT_DOWNLOAD_URL)
   const [already, setAlready] = useState(false) // email was registered before
   const [form, setForm] = useState({ name: '', mobile: '', email: '', college: '', note: '' })
   const [error, setError] = useState('')
   const [done, setDone] = useState(false)
+  const [emailSent, setEmailSent] = useState(true)
   const [busy, setBusy] = useState(false)
 
   useEffect(() => {
     api(`/public/contests/${slug}`)
       .then((d) => {
         setContest(d.contest)
-        setDownloadUrl(d.download)
+        setDownloadUrl(d.download || DEFAULT_DOWNLOAD_URL)
       })
       .catch((err) => setError(err.message))
   }, [slug])
@@ -33,7 +35,8 @@ export default function RegisterPage() {
     setError('')
     setBusy(true)
     try {
-      await api(`/public/contests/${slug}/register`, { method: 'POST', body: form })
+      const res = await api(`/public/contests/${slug}/register`, { method: 'POST', body: form })
+      setEmailSent(res.emailSent !== false)
       setDone(true)
     } catch (err) {
       setError(err.message)
@@ -78,7 +81,9 @@ export default function RegisterPage() {
                   <CheckCircle2 className="mx-auto text-accent" size={40} />
                   <p className="mt-3 text-xl font-bold text-accent-dark">You are registered!</p>
                   <p className="mt-1 text-sm text-slate-600">
-                    We emailed you a unique password. Download the app below, open it and login with your email and that password.
+                    {emailSent
+                      ? 'We emailed you a unique password (check spam too). Download the app below, open it and login with your email and that password.'
+                      : 'We could not send the password email right now. Please tell your teacher, they can resend it. You can already download the app below.'}
                   </p>
                 </div>
               ) : (
@@ -97,7 +102,7 @@ export default function RegisterPage() {
                 </form>
               )}
 
-              {(done || already) && downloadUrl && (
+              {(done || already) && (
                 <div className="mt-8 border-t border-line pt-7">
                   <DownloadCard url={downloadUrl} />
                 </div>

@@ -59,3 +59,7 @@ CREATE TABLE IF NOT EXISTS attempts (
 ALTER TABLE admins ADD COLUMN IF NOT EXISTS download_slug TEXT NOT NULL
   DEFAULT substr(md5(random()::text || clock_timestamp()::text), 1, 12);
 CREATE UNIQUE INDEX IF NOT EXISTS admins_download_slug_key ON admins (download_slug);
+
+-- Did the password email reach the mail server? ('pending' | 'sent' | 'failed')
+ALTER TABLE registrations ADD COLUMN IF NOT EXISTS mail_status TEXT NOT NULL DEFAULT 'pending';
+ALTER TABLE registrations ADD COLUMN IF NOT EXISTS mail_error TEXT NOT NULL DEFAULT '';
