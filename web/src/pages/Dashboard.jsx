@@ -73,8 +73,8 @@ export default function Dashboard() {
               <div className="p-5">
                 <h3 className="truncate font-bold">{c.title}</h3>
                 <div className="mt-3 flex gap-2">
-                  <Pill tone="blue">{c.questionCount} questions</Pill>
-                  <Pill tone="green">{c.studentCount} students</Pill>
+                  <Pill tone="blue">{c.questionCount} {c.questionCount === 1 ? 'question' : 'questions'}</Pill>
+                  <Pill tone="green">{c.studentCount} {c.studentCount === 1 ? 'student' : 'students'}</Pill>
                 </div>
               </div>
             </Card>

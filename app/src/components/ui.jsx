@@ -31,8 +31,12 @@ export function Field({ label, as: Tag = 'input', className = '', ...props }) {
   )
 }
 
+// Default padding p-6, unless the caller passes its own p-* (e.g. p-0 for flush images)
 export const Card = ({ className = '', ...props }) => (
-  <div className={`rounded-2xl border border-line bg-white p-6 shadow-[0_1px_3px_rgba(15,17,21,0.04)] ${className}`} {...props} />
+  <div
+    className={`rounded-2xl border border-line bg-white shadow-[0_1px_3px_rgba(15,17,21,0.04)] ${/(^| )p-\d/.test(className) ? '' : 'p-6'} ${className}`}
+    {...props}
+  />
 )
 
 // Small uppercase label used above values (matches the exam screens)
