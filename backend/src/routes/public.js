@@ -2,6 +2,7 @@ import { Router } from 'express'
 import { query } from '../db/pool.js'
 import { isEmail, makeAccessCode } from '../utils/helpers.js'
 import { sendCredentials } from '../utils/mailer.js'
+import { config } from '../config.js'
 
 // No login needed: this is what students see when they open the share link
 const router = Router()
@@ -16,6 +17,13 @@ async function findContest(slug) {
   return contest
 }
 
+// Page shared by an admin so students can ONLY download the app
+router.get('/downloads/:slug', async (req, res) => {
+  const [admin] = await query('SELECT name, club_name FROM admins WHERE download_slug = $1', [req.params.slug])
+  if (!admin) return res.status(404).json({ error: 'This download link is not valid' })
+  res.json({ clubName: admin.club_name, adminName: admin.name, downloads: config.downloads })
+})
+
 router.get('/contests/:slug', async (req, res) => {
   const c = await findContest(req.params.slug)
   if (!c) return res.status(404).json({ error: 'This contest link is not valid' })
@@ -27,6 +35,7 @@ router.get('/contests/:slug', async (req, res) => {
       durationMinutes: c.duration_minutes,
       questionCount: Number(c.question_count),
     },
+    downloads: config.downloads,
   })
 })
 

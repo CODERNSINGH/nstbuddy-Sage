@@ -54,3 +54,8 @@ CREATE TABLE IF NOT EXISTS attempts (
   answers         JSONB NOT NULL DEFAULT '{}',   -- { "questionId": chosenIndex }
   violations      INT NOT NULL DEFAULT 0
 );
+
+-- Each admin gets one unique "download the app" link (/d/<download_slug>)
+ALTER TABLE admins ADD COLUMN IF NOT EXISTS download_slug TEXT NOT NULL
+  DEFAULT substr(md5(random()::text || clock_timestamp()::text), 1, 12);
+CREATE UNIQUE INDEX IF NOT EXISTS admins_download_slug_key ON admins (download_slug);

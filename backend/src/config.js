@@ -11,5 +11,10 @@ export const config = {
     user: process.env.SMTP_USER,
     pass: process.env.SMTP_PASS,
   },
+  // Mac app installers. Default = the latest GitHub Release of this repo.
+  downloads: {
+    arm64: process.env.DOWNLOAD_URL_ARM64 || 'https://github.com/CODERNSINGH/nstbuddy-Sage/releases/latest/download/NstBuddy-Sage-arm64.dmg',
+    intel: process.env.DOWNLOAD_URL_INTEL || 'https://github.com/CODERNSINGH/nstbuddy-Sage/releases/latest/download/NstBuddy-Sage-x64.dmg',
+  },
   mailFrom: process.env.MAIL_FROM || 'NstBuddy Sage <no-reply@nstbuddy.com>',
 }

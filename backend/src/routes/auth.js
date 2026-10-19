@@ -6,7 +6,13 @@ import { isEmail } from '../utils/helpers.js'
 
 const router = Router()
 
-const publicAdmin = (a) => ({ id: a.id, name: a.name, clubName: a.club_name, email: a.email })
+const publicAdmin = (a) => ({
+  id: a.id,
+  name: a.name,
+  clubName: a.club_name,
+  email: a.email,
+  downloadSlug: a.download_slug,
+})
 
 router.post('/signup', async (req, res) => {
   const { name, clubName, email, password } = req.body
