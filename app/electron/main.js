@@ -4,6 +4,7 @@ import { fileURLToPath } from 'node:url'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const DEV_URL = 'http://localhost:5174'
+const ICON = path.join(__dirname, '../build/icon.png')
 
 let win
 let lockedDown = false // true while the student is taking the exam
@@ -13,7 +14,8 @@ function createWindow() {
   win = new BrowserWindow({
     width: 1100,
     height: 760,
-    backgroundColor: '#0b0b0f',
+    backgroundColor: '#ffffff',
+    icon: ICON,
     webPreferences: {
       preload: path.join(__dirname, 'preload.cjs'),
       contextIsolation: true,
@@ -103,6 +105,7 @@ app.on('before-quit', () => {
 })
 
 app.whenReady().then(() => {
+  app.dock?.setIcon(ICON) // macOS dock icon (also shown in dev mode)
   buildMenu()
   setupScreenShare()
   setupIpc()
