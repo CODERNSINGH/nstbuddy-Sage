@@ -33,9 +33,17 @@ router.post('/start', requireStudent, async (req, res) => {
   const [existing] = await query('SELECT * FROM attempts WHERE registration_id = $1', [req.user.id])
   if (existing?.submitted_at) return res.status(409).json({ error: 'You have already submitted this exam' })
 
+  // ON CONFLICT keeps this safe if two start requests arrive at the same moment
   const attempt =
     existing ||
-    (await query('INSERT INTO attempts (registration_id) VALUES ($1) RETURNING *', [req.user.id]))[0]
+    (
+      await query(
+        `INSERT INTO attempts (registration_id) VALUES ($1)
+         ON CONFLICT (registration_id) DO UPDATE SET registration_id = EXCLUDED.registration_id
+         RETURNING *`,
+        [req.user.id],
+      )
+    )[0]
 
   const [contest] = await query('SELECT duration_minutes FROM contests WHERE id = $1', [req.user.contestId])
   const questions = await query(
