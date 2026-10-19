@@ -21,7 +21,7 @@ function createWindow() {
     },
   })
 
-  if (app.isPackaged) win.loadFile(path.join(__dirname, '../dist/index.html'))
+  if (!process.env.ELECTRON_DEV) win.loadFile(path.join(__dirname, '../dist/index.html'))
   else win.loadURL(DEV_URL)
 
   // Closing the window (red button, Cmd+W) is blocked during the exam
