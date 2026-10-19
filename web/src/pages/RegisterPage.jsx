@@ -1,7 +1,9 @@
+import { CheckCircle2, ClipboardList, Clock, HelpCircle } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { api } from '../lib/api.js'
-import { Button, Card, ErrorText, Field, Logo } from '../components/ui.jsx'
+import Banner from '../components/Banner.jsx'
+import { Button, Card, ErrorText, Field, IconBox, Label, Logo } from '../components/ui.jsx'
 
 // Public page: students open the share link /c/:slug and sign up here
 export default function RegisterPage() {
@@ -35,43 +37,54 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="min-h-screen bg-ink px-4 py-10">
-      <div className="mx-auto max-w-lg">
-        <Card>
-          <Logo />
-          {!contest && <ErrorText>{error}</ErrorText>}
+    <div className="min-h-screen bg-slate-50 px-4 py-10">
+      <div className="mx-auto max-w-xl">
+        <div className="mb-6 flex justify-center"><Logo className="h-8" /></div>
+
+        <Card className="p-6 shadow-xl shadow-slate-200/60 sm:p-8">
+          {!contest && (error ? <ErrorText>{error}</ErrorText> : <p className="text-slate-500">Loading...</p>)}
+
           {contest && (
             <>
-              <p className="mt-6 text-sm font-semibold text-accent">{contest.clubName}</p>
-              <h1 className="text-2xl font-bold">{contest.title}</h1>
-              {contest.description && <p className="mt-1 text-slate-600">{contest.description}</p>}
-              <p className="mt-2 text-sm text-slate-500">
-                {contest.questionCount} questions · {contest.durationMinutes} minutes
-              </p>
+              <Banner icon={ClipboardList} />
+              <div className="mt-6">
+                <Label>{contest.clubName}</Label>
+                <h1 className="mt-1 text-3xl font-extrabold tracking-tight">{contest.title}</h1>
+                {contest.description && <p className="mt-2 text-slate-600">{contest.description}</p>}
+              </div>
+
+              <div className="mt-5 grid grid-cols-2 gap-4">
+                <div className="flex items-center gap-3">
+                  <IconBox icon={Clock} />
+                  <div><Label>Duration</Label><p className="font-bold">{contest.durationMinutes} min</p></div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <IconBox icon={HelpCircle} />
+                  <div><Label>Questions</Label><p className="font-bold">{contest.questionCount}</p></div>
+                </div>
+              </div>
+
+              <hr className="my-7 border-line" />
 
               {done ? (
-                <div className="mt-6 rounded-xl bg-accent-light p-4 text-green-900">
-                  <p className="font-bold">You are registered! 🎉</p>
-                  <p className="mt-1 text-sm">
-                    We emailed you a unique password. Open the NstBuddy Sage exam app on your Mac and login with your email
-                    and that password.
+                <div className="rounded-2xl bg-accent-soft p-6 text-center">
+                  <CheckCircle2 className="mx-auto text-accent" size={40} />
+                  <p className="mt-3 text-xl font-bold text-accent-dark">You are registered!</p>
+                  <p className="mt-1 text-sm text-slate-600">
+                    We emailed you a unique password. Open the NstBuddy exam app on your Mac and login with your email and that password.
                   </p>
                 </div>
               ) : (
-                <form onSubmit={submit} className="mt-6 space-y-4">
+                <form onSubmit={submit} className="space-y-4">
                   <Field label="Full name" value={form.name} onChange={set('name')} required />
-                  <Field label="Mobile number" type="tel" value={form.mobile} onChange={set('mobile')} required />
-                  <Field label="Email" type="email" value={form.email} onChange={set('email')} required />
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    <Field label="Mobile number" type="tel" value={form.mobile} onChange={set('mobile')} required />
+                    <Field label="Email" type="email" value={form.email} onChange={set('email')} required />
+                  </div>
                   <Field label="College name" value={form.college} onChange={set('college')} required />
-                  <Field
-                    label="Anything you want to share? (optional)"
-                    as="textarea"
-                    rows={3}
-                    value={form.note}
-                    onChange={set('note')}
-                  />
+                  <Field label="Anything you want to share? (optional)" as="textarea" rows={3} value={form.note} onChange={set('note')} />
                   <ErrorText>{error}</ErrorText>
-                  <Button className="w-full" disabled={busy}>
+                  <Button variant="green" size="lg" className="w-full" disabled={busy}>
                     {busy ? 'Registering...' : 'Register'}
                   </Button>
                 </form>

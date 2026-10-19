@@ -1,6 +1,7 @@
+import { Check, Trash2 } from 'lucide-react'
 import { useState } from 'react'
 import { api } from '../lib/api.js'
-import { Button, Card, ErrorText, Field } from './ui.jsx'
+import { Button, Card, ErrorText, Field, Label } from './ui.jsx'
 
 const emptyForm = { text: '', options: ['', '', '', ''], correctIndex: 0, explanation: '' }
 
@@ -57,65 +58,81 @@ export default function QuestionsTab({ contestId, questions, reload }) {
   }
 
   return (
-    <div className="grid gap-6 lg:grid-cols-2">
+    <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
       <div className="space-y-6">
         <Card>
-          <h3 className="mb-3 font-bold">Add a question</h3>
-          <form onSubmit={addOne} className="space-y-3">
+          <h3 className="text-lg font-bold">Add a question</h3>
+          <form onSubmit={addOne} className="mt-4 space-y-4">
             <Field label="Question" as="textarea" rows={2} value={form.text} onChange={(e) => setForm({ ...form, text: e.target.value })} required />
-            {form.options.map((option, i) => (
-              <div key={i} className="flex items-end gap-2">
-                <div className="flex-1">
-                  <Field label={`Option ${'ABCD'[i]}`} value={option} onChange={(e) => setOption(i, e.target.value)} required />
+            <div className="space-y-2">
+              <Label>Options (tick the correct one)</Label>
+              {form.options.map((option, i) => (
+                <div key={i} className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setForm({ ...form, correctIndex: i })}
+                    title="Mark as correct"
+                    className={`grid h-10 w-10 shrink-0 place-items-center rounded-xl border text-sm font-bold ${
+                      form.correctIndex === i ? 'border-accent bg-accent text-white' : 'border-line text-slate-500'
+                    }`}
+                  >
+                    {form.correctIndex === i ? <Check size={16} /> : 'ABCD'[i]}
+                  </button>
+                  <input
+                    className="w-full rounded-xl border border-line px-3.5 py-2.5 text-sm outline-none focus:border-brand focus:ring-4 focus:ring-brand/10"
+                    placeholder={`Option ${'ABCD'[i]}`}
+                    value={option}
+                    onChange={(e) => setOption(i, e.target.value)}
+                    required
+                  />
                 </div>
-                <label className="mb-2 flex items-center gap-1 text-xs font-semibold text-accent">
-                  <input type="radio" name="correct" checked={form.correctIndex === i} onChange={() => setForm({ ...form, correctIndex: i })} />
-                  Correct
-                </label>
-              </div>
-            ))}
+              ))}
+            </div>
             <Field label="Explanation" as="textarea" rows={2} value={form.explanation} onChange={(e) => setForm({ ...form, explanation: e.target.value })} />
             <Button variant="green">Add question</Button>
           </form>
         </Card>
 
         <Card>
-          <h3 className="mb-1 font-bold">Or paste JSON</h3>
-          <p className="mb-2 text-xs text-slate-500">Use this pattern (list of questions):</p>
-          <pre className="mb-3 overflow-x-auto rounded-lg bg-ink p-3 text-xs text-green-400">{SAMPLE_JSON}</pre>
+          <h3 className="text-lg font-bold">Or paste JSON</h3>
+          <p className="mt-1 text-sm text-slate-500">Add many questions at once using this pattern:</p>
+          <pre className="mt-3 overflow-x-auto rounded-xl bg-ink p-4 text-xs leading-relaxed text-emerald-300">{SAMPLE_JSON}</pre>
           <textarea
-            className="h-32 w-full rounded-lg border border-slate-300 p-2 font-mono text-xs outline-none focus:border-brand"
+            className="mt-3 h-32 w-full rounded-xl border border-line p-3 font-mono text-xs outline-none focus:border-brand focus:ring-4 focus:ring-brand/10"
             value={json}
             onChange={(e) => setJson(e.target.value)}
             placeholder="Paste JSON here"
           />
-          <Button className="mt-2" onClick={addJson} disabled={!json.trim()}>
-            Import JSON
-          </Button>
+          <Button className="mt-3" onClick={addJson} disabled={!json.trim()}>Import JSON</Button>
         </Card>
         <ErrorText>{error}</ErrorText>
       </div>
 
-      <div className="space-y-3">
-        <h3 className="font-bold">{questions.length} questions</h3>
+      <div className="space-y-4">
+        <h3 className="text-lg font-bold">{questions.length} questions</h3>
+        {!questions.length && <Card className="text-center text-sm text-slate-500">No questions yet. Add one on the left.</Card>}
         {questions.map((q, i) => (
-          <Card key={q.id} className="p-4">
-            <div className="flex justify-between gap-3">
-              <p className="font-semibold">
-                {i + 1}. {q.text}
-              </p>
-              <button className="text-xs text-red-600" onClick={() => remove(q.id)}>
-                Delete
+          <Card key={q.id} className="p-5">
+            <div className="flex items-start justify-between gap-3">
+              <p className="font-semibold"><span className="mr-2 text-brand">Q{i + 1}</span>{q.text}</p>
+              <button className="rounded-lg p-1.5 text-slate-400 hover:bg-red-50 hover:text-red-600" onClick={() => remove(q.id)}>
+                <Trash2 size={16} />
               </button>
             </div>
-            <ul className="mt-2 space-y-1 text-sm">
+            <ul className="mt-3 space-y-1.5">
               {q.options.map((o, j) => (
-                <li key={j} className={j === q.correctIndex ? 'font-semibold text-accent' : 'text-slate-600'}>
-                  {'ABCD'[j]}. {o} {j === q.correctIndex && '✓'}
+                <li
+                  key={j}
+                  className={`flex items-center gap-3 rounded-xl border px-3 py-2 text-sm ${
+                    j === q.correctIndex ? 'border-accent/30 bg-accent-soft font-semibold text-accent-dark' : 'border-line text-slate-600'
+                  }`}
+                >
+                  <span className="grid h-6 w-6 place-items-center rounded-md border border-line bg-white text-xs font-bold text-ink">{'ABCD'[j]}</span>
+                  {o}
                 </li>
               ))}
             </ul>
-            {q.explanation && <p className="mt-2 rounded bg-brand-light p-2 text-xs text-brand-dark">{q.explanation}</p>}
+            {q.explanation && <p className="mt-3 rounded-xl bg-brand-soft p-3 text-sm text-brand-dark">{q.explanation}</p>}
           </Card>
         ))}
       </div>
