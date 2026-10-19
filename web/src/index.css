@@ -1,16 +1,19 @@
 @import "tailwindcss";
+@import "@fontsource-variable/inter";
 
 /* Theme: blue rgb(0,87,193), black and green */
 @theme {
+  --font-sans: 'Inter Variable', system-ui, sans-serif;
   --color-brand: rgb(0, 87, 193);
-  --color-brand-dark: rgb(0, 62, 140);
-  --color-brand-light: rgb(230, 240, 255);
-  --color-ink: #0b0b0f;
-  --color-accent: #16a34a;
-  --color-accent-light: #dcfce7;
+  --color-brand-dark: rgb(0, 66, 150);
+  --color-brand-soft: rgb(235, 243, 255);
+  --color-ink: #0f1115;
+  --color-accent: #2f9e63;
+  --color-accent-dark: #25834f;
+  --color-accent-soft: #e6f6ee;
+  --color-line: #e8eaee;
 }
 
 body {
-  @apply bg-slate-50 text-ink antialiased;
-  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  @apply bg-white font-sans text-ink antialiased;
 }
