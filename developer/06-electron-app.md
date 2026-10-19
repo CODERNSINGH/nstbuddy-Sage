@@ -7,7 +7,9 @@ app/src/pages/           LoginScreen -> PermissionsScreen -> QuizScreen -> Resul
 ```
 
 ## Flow
-`login -> permissions (screen, camera, full screen) -> quiz -> result`
+`login -> permissions (screen, camera, full screen) -> intro (Start Test) -> quiz -> result`
+
+Quiz has Previous/Next, a question map (Attempted / Viewed / Current / Marked for review), Mark for review, Clear Selection, live timer.
 
 ## Lockdown (while the exam is running)
 - Full screen + always on top; leaving the window pulls focus back and logs a **warning**.

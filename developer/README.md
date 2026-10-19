@@ -10,4 +10,5 @@ All development notes for **NstBuddy Sage** live here.
 | [04-backend.md](04-backend.md) | API routes and folder structure |
 | [05-web.md](05-web.md) | Admin website + student registration page |
 | [06-electron-app.md](06-electron-app.md) | Student exam app (proctoring) |
-| [07-setup.md](07-setup.md) | How to run everything |
+| [07-setup.md](07-setup.md) | How to run everything + email setup |
+| [08-design-system.md](08-design-system.md) | Colors, fonts, components |
