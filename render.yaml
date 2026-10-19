@@ -27,8 +27,6 @@ services:
         sync: false
       - key: RESEND_API_KEY
         sync: false # optional: send mail over HTTPS (Render free blocks SMTP ports)
-      - key: DOWNLOAD_URL
-        value: https://pub-e7bda2187d4e480eba6c7b0d8daa8353.r2.dev/NstBuddy-Sage-arm64.dmg
 
   - type: web
     name: nstbuddy-sage-web

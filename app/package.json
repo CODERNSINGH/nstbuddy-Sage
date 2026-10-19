@@ -42,15 +42,24 @@
       "target": "dmg",
       "icon": "build/icon.icns",
       "category": "public.app-category.education",
-      "identity": null,
+      "identity": "-",
       "extendInfo": {
         "NSCameraUsageDescription": "NstBuddy Sage needs your camera to proctor the exam.",
         "NSScreenCaptureUsageDescription": "NstBuddy Sage needs to share your screen to proctor the exam."
       },
-      "artifactName": "NstBuddy-Sage-${arch}.${ext}"
+      "artifactName": "NstBuddy-Sage-${arch}.${ext}",
+      "hardenedRuntime": false,
+      "gatekeeperAssess": false
     },
     "dmg": {
-      "title": "NstBuddy Sage"
-    }
+      "title": "NstBuddy Sage",
+      "format": "UDBZ"
+    },
+    "compression": "maximum",
+    "electronLanguages": [
+      "en",
+      "en-US"
+    ],
+    "afterPack": "electron/after-pack.cjs"
   }
 }

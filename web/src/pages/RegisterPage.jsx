@@ -2,7 +2,7 @@ import { CheckCircle2, ClipboardList, Clock, HelpCircle } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { api } from '../lib/api.js'
-import { DEFAULT_DOWNLOAD_URL } from '../lib/config.js'
+import { DOWNLOAD_URL } from '../lib/config.js'
 import Banner from '../components/Banner.jsx'
 import DownloadCard from '../components/DownloadCard.jsx'
 import { Button, Card, ErrorText, Field, IconBox, Label, Logo } from '../components/ui.jsx'
@@ -11,7 +11,6 @@ import { Button, Card, ErrorText, Field, IconBox, Label, Logo } from '../compone
 export default function RegisterPage() {
   const { slug } = useParams()
   const [contest, setContest] = useState(null)
-  const [downloadUrl, setDownloadUrl] = useState(DEFAULT_DOWNLOAD_URL)
   const [already, setAlready] = useState(false) // email was registered before
   const [form, setForm] = useState({ name: '', mobile: '', email: '', college: '', note: '' })
   const [error, setError] = useState('')
@@ -21,10 +20,7 @@ export default function RegisterPage() {
 
   useEffect(() => {
     api(`/public/contests/${slug}`)
-      .then((d) => {
-        setContest(d.contest)
-        setDownloadUrl(d.download || DEFAULT_DOWNLOAD_URL)
-      })
+      .then((d) => setContest(d.contest))
       .catch((err) => setError(err.message))
   }, [slug])
 
@@ -104,7 +100,7 @@ export default function RegisterPage() {
 
               {(done || already) && (
                 <div className="mt-8 border-t border-line pt-7">
-                  <DownloadCard url={downloadUrl} />
+                  <DownloadCard />
                 </div>
               )}
             </>

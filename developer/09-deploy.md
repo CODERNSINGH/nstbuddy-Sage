@@ -15,14 +15,18 @@
   Production builds always use `.env.production`.
 
 ## Mac app download (Apple Silicon only)
-- Build: `cd app && npm run dist` -> `app/release/NstBuddy-Sage-arm64.dmg`.
-- Upload it to Cloudflare R2 and enable **public access** (r2.dev URL or custom domain).
-  The `<account>.r2.cloudflarestorage.com` address is the private S3 API and cannot be used for downloads.
-- Set the public file URL as `DOWNLOAD_URL` on the backend (Render env). Default fallback: GitHub Release `NstBuddy-Sage-arm64.dmg`.
+- Build: `cd app && npm run dist` -> `app/release/NstBuddy-Sage-arm64.dmg` (~95 MB).
+- The app is **ad-hoc signed** (`mac.identity: '-'`). Without a valid signature, Apple Silicon Macs say the app is "damaged".
+  `electron/after-pack.cjs` removes the unused SwiftShader library (16 MB) before signing to keep the file small.
+- The installer is attached to a **GitHub Release** (not committed to git, which has a 100 MB file limit):
+  `gh release create v1.0.0 app/release/NstBuddy-Sage-arm64.dmg --title "NstBuddy Sage 1.0.0"`.
+  To publish a new version, create a new release with the same file name; the website always links to `releases/latest`.
+- The website link lives in `web/src/lib/config.js`.
 - Where students get it:
   1. On the contest link `/c/<contest>` **after they register** (or if they were already registered).
   2. Each admin's **download-only link** `/d/<code>` (dashboard, "App download link"). Share it anytime.
 - If the dashboard has no download card or the link shows `undefined`, the backend is running old code: redeploy it.
+- macOS says "damaged"? Students run once: `xattr -cr "/Applications/NstBuddy Sage.app"` (shown on the download page).
 
 ## Email on Render
 Render **free** instances block outbound SMTP ports (25, 465, 587), so Gmail SMTP works on your laptop but times out on Render.

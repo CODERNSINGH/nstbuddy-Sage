@@ -1,2 +1,3 @@
-// Public Cloudflare R2 link of the Apple Silicon app. The backend can override it with DOWNLOAD_URL.
-export const DEFAULT_DOWNLOAD_URL = 'https://pub-e7bda2187d4e480eba6c7b0d8daa8353.r2.dev/NstBuddy-Sage-arm64.dmg'
+// Apple Silicon installer, attached to the latest GitHub Release of this repo.
+// To ship a new version: build with `npm run dist` in app/, then `gh release create vX.Y.Z app/release/NstBuddy-Sage-arm64.dmg`.
+export const DOWNLOAD_URL = 'https://github.com/CODERNSINGH/nstbuddy-Sage/releases/latest/download/NstBuddy-Sage-arm64.dmg'

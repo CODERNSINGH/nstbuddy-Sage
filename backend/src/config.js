@@ -11,8 +11,6 @@ export const config = {
     user: process.env.SMTP_USER,
     pass: process.env.SMTP_PASS,
   },
-  // Mac app installer (Apple Silicon only). Set DOWNLOAD_URL to the public Cloudflare R2 link.
-  downloadUrl: process.env.DOWNLOAD_URL || 'https://pub-e7bda2187d4e480eba6c7b0d8daa8353.r2.dev/NstBuddy-Sage-arm64.dmg',
   resendApiKey: process.env.RESEND_API_KEY, // optional: send mail over HTTPS instead of SMTP
   mailFrom: process.env.MAIL_FROM || 'NstBuddy Sage <no-reply@nstbuddy.com>',
 }
