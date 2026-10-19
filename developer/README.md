@@ -12,3 +12,4 @@ All development notes for **NstBuddy Sage** live here.
 | [06-electron-app.md](06-electron-app.md) | Student exam app (proctoring) |
 | [07-setup.md](07-setup.md) | How to run everything + email setup |
 | [08-design-system.md](08-design-system.md) | Colors, fonts, components |
+| [09-deploy.md](09-deploy.md) | Render deploy + Mac app downloads |

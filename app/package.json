@@ -46,7 +46,8 @@
       "extendInfo": {
         "NSCameraUsageDescription": "NstBuddy Sage needs your camera to proctor the exam.",
         "NSScreenCaptureUsageDescription": "NstBuddy Sage needs to share your screen to proctor the exam."
-      }
+      },
+      "artifactName": "NstBuddy-Sage-${arch}.${ext}"
     },
     "dmg": {
       "title": "NstBuddy Sage"

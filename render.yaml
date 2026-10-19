@@ -1,0 +1,38 @@
+# Render Blueprint: deploys the backend and the website from this repo.
+# Render dashboard -> New -> Blueprint -> pick this repo. Secrets (sync: false) are asked once.
+services:
+  - type: web
+    name: nstbuddy-sage # -> https://nstbuddy-sage.onrender.com
+    runtime: node
+    rootDir: backend
+    buildCommand: npm install && npm run migrate # migrate = create/update tables (safe to repeat)
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: WEB_URL
+        sync: false # the website URL, e.g. https://nstbuddy-sage-web.onrender.com
+      - key: SMTP_HOST
+        value: smtp.gmail.com
+      - key: SMTP_PORT
+        value: "587"
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASS
+        sync: false
+      - key: MAIL_FROM
+        sync: false
+
+  - type: web
+    name: nstbuddy-sage-web
+    runtime: static
+    rootDir: web
+    buildCommand: npm install && npm run build # no env needed: it talks to nstbuddy-sage.onrender.com by default
+    staticPublishPath: dist
+    routes:
+      - type: rewrite # so links like /c/<contest> and /d/<download> open the app
+        source: /*
+        destination: /index.html
