@@ -1,10 +1,11 @@
+import { ArrowLeft, Check, Clock, Copy, HelpCircle, Trash2 } from 'lucide-react'
 import { useCallback, useEffect, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { api } from '../lib/api.js'
-import { Button, Card } from '../components/ui.jsx'
+import { Button, Card, Pill } from '../components/ui.jsx'
+import LeaderboardTab from '../components/LeaderboardTab.jsx'
 import QuestionsTab from '../components/QuestionsTab.jsx'
 import StudentsTab from '../components/StudentsTab.jsx'
-import LeaderboardTab from '../components/LeaderboardTab.jsx'
 
 const TABS = ['Questions', 'Students', 'Leaderboard']
 
@@ -37,28 +38,43 @@ export default function ContestPage() {
   }
 
   return (
-    <div className="space-y-5">
-      <Link to="/" className="text-sm text-brand">← All contests</Link>
+    <div className="space-y-6">
+      <Link to="/" className="inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-ink">
+        <ArrowLeft size={16} /> All contests
+      </Link>
 
-      <Card className="flex flex-wrap items-center justify-between gap-4 border-l-4 border-l-brand">
-        <div>
-          <h1 className="text-2xl font-bold">{contest.title}</h1>
-          <p className="text-sm text-slate-500">{contest.durationMinutes} minutes · {questions.length} questions</p>
+      <Card className="p-7">
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <h1 className="text-3xl font-extrabold tracking-tight">{contest.title}</h1>
+            {contest.description && <p className="mt-1 text-slate-600">{contest.description}</p>}
+            <div className="mt-3 flex gap-2">
+              <Pill tone="gray"><Clock size={12} className="mr-1 inline" />{contest.durationMinutes} min</Pill>
+              <Pill tone="blue"><HelpCircle size={12} className="mr-1 inline" />{questions.length} questions</Pill>
+            </div>
+          </div>
+          <Button variant="danger" size="sm" onClick={remove}><Trash2 size={14} /> Delete</Button>
         </div>
-        <div className="flex items-center gap-2">
-          <input readOnly value={shareLink} className="w-64 rounded-lg border border-slate-300 bg-slate-50 px-3 py-2 text-sm" />
-          <Button variant="green" onClick={copyLink}>{copied ? 'Copied!' : 'Copy link'}</Button>
-          <Button variant="danger" onClick={remove}>Delete</Button>
+
+        <div className="mt-6 rounded-xl bg-slate-50 p-3">
+          <p className="mb-2 text-[11px] font-semibold uppercase tracking-widest text-slate-500">Share this link with students</p>
+          <div className="flex gap-2">
+            <input readOnly value={shareLink} className="min-w-0 flex-1 rounded-xl border border-line bg-white px-3.5 py-2.5 text-sm" />
+            <Button variant={copied ? 'green' : 'dark'} onClick={copyLink}>
+              {copied ? <Check size={16} /> : <Copy size={16} />} {copied ? 'Copied' : 'Copy'}
+            </Button>
+          </div>
         </div>
       </Card>
 
-      <div className="flex gap-2 border-b border-slate-200">
+      {/* Segmented tabs, same style as "Campuses / Other Courses" on the main site */}
+      <div className="inline-flex rounded-2xl bg-slate-100 p-1">
         {TABS.map((t) => (
           <button
             key={t}
             onClick={() => setTab(t)}
-            className={`-mb-px border-b-2 px-4 py-2 text-sm font-semibold ${
-              tab === t ? 'border-brand text-brand' : 'border-transparent text-slate-500'
+            className={`rounded-xl px-5 py-2 text-sm font-semibold transition ${
+              tab === t ? 'bg-white text-brand shadow-sm' : 'text-slate-500 hover:text-ink'
             }`}
           >
             {t}

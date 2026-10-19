@@ -14,7 +14,7 @@ function AdminLayout({ children }) {
   return (
     <>
       <Navbar />
-      <main className="mx-auto max-w-5xl px-4 py-6">{children}</main>
+      <main className="mx-auto max-w-6xl px-5 py-8">{children}</main>
     </>
   )
 }

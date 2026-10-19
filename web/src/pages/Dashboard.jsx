@@ -1,82 +1,96 @@
+import { BookOpen, Clock, Plus, Trophy, Users } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { api } from '../lib/api.js'
-import { Button, Card, ErrorText, Field } from '../components/ui.jsx'
+import { useAuth } from '../lib/auth.jsx'
+import NewContestModal from '../components/NewContestModal.jsx'
+import { Button, Card, IconBox, Pill } from '../components/ui.jsx'
+
+// Blue / green / dark banners cycle so the grid feels alive
+const banners = ['from-brand to-blue-900', 'from-accent to-emerald-800', 'from-slate-700 to-ink']
 
 export default function Dashboard() {
+  const { admin } = useAuth()
   const [contests, setContests] = useState(null)
-  const [form, setForm] = useState({ title: '', description: '', durationMinutes: 30 })
-  const [error, setError] = useState('')
+  const [creating, setCreating] = useState(false)
 
   const load = () => api('/contests').then((d) => setContests(d.contests))
   useEffect(() => {
     load()
   }, [])
 
-  async function create(e) {
-    e.preventDefault()
-    setError('')
-    try {
-      await api('/contests', { method: 'POST', body: { ...form, durationMinutes: Number(form.durationMinutes) } })
-      setForm({ title: '', description: '', durationMinutes: 30 })
-      load()
-    } catch (err) {
-      setError(err.message)
-    }
-  }
+  const sum = (key) => (contests || []).reduce((total, c) => total + c[key], 0)
+  const stats = [
+    { icon: Trophy, value: contests?.length ?? 0, label: 'Contests' },
+    { icon: BookOpen, value: sum('questionCount'), label: 'Questions' },
+    { icon: Users, value: sum('studentCount'), label: 'Students' },
+  ]
 
   return (
-    <div className="grid gap-6 md:grid-cols-[1fr_320px]">
-      <section>
-        <h2 className="mb-3 text-xl font-bold">Your contests</h2>
-        {contests === null && <p className="text-slate-500">Loading...</p>}
-        {contests?.length === 0 && (
-          <Card className="text-center text-slate-500">No contests yet. Create your first one 👉</Card>
-        )}
-        <div className="space-y-3">
-          {contests?.map((c) => (
-            <Link key={c.id} to={`/contests/${c.id}`} className="block">
-              <Card className="transition hover:border-brand">
-                <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <h3 className="font-semibold">{c.title}</h3>
-                    <p className="text-sm text-slate-500">{c.durationMinutes} min</p>
-                  </div>
-                  <div className="flex gap-2 text-xs font-semibold">
-                    <span className="rounded-full bg-brand-light px-3 py-1 text-brand">{c.questionCount} questions</span>
-                    <span className="rounded-full bg-accent-light px-3 py-1 text-accent">{c.studentCount} students</span>
-                  </div>
-                </div>
-              </Card>
-            </Link>
-          ))}
+    <div>
+      <div className="flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <p className="text-sm font-semibold text-brand">Hi {admin.name.split(' ')[0]} 👋</p>
+          <h1 className="text-4xl font-extrabold tracking-tight">Your contests</h1>
         </div>
-      </section>
+        <Button variant="green" size="lg" onClick={() => setCreating(true)}>
+          <Plus size={18} /> New contest
+        </Button>
+      </div>
 
-      <Card className="h-fit">
-        <h2 className="mb-3 text-lg font-bold">New contest</h2>
-        <form onSubmit={create} className="space-y-3">
-          <Field label="Title" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} required />
-          <Field
-            label="Description (optional)"
-            as="textarea"
-            rows={2}
-            value={form.description}
-            onChange={(e) => setForm({ ...form, description: e.target.value })}
-          />
-          <Field
-            label="Duration (minutes)"
-            type="number"
-            min="1"
-            value={form.durationMinutes}
-            onChange={(e) => setForm({ ...form, durationMinutes: e.target.value })}
-          />
-          <ErrorText>{error}</ErrorText>
-          <Button variant="green" className="w-full">
-            Create contest
-          </Button>
-        </form>
-      </Card>
+      <div className="mt-8 grid grid-cols-3 gap-4">
+        {stats.map(({ icon, value, label }) => (
+          <Card key={label} className="flex items-center gap-4 p-5">
+            <IconBox icon={icon} className="bg-brand-soft text-brand" />
+            <div>
+              <p className="text-2xl font-extrabold leading-none">{value}</p>
+              <p className="mt-1 text-sm text-slate-500">{label}</p>
+            </div>
+          </Card>
+        ))}
+      </div>
+
+      <h2 className="mb-4 mt-12 text-xl font-bold tracking-tight">All contests</h2>
+      {contests === null && <p className="text-slate-500">Loading...</p>}
+      {contests?.length === 0 && (
+        <Card className="py-14 text-center">
+          <p className="text-lg font-semibold">No contests yet</p>
+          <p className="mt-1 text-sm text-slate-500">Create your first quiz and share the link with students.</p>
+          <Button className="mt-5" onClick={() => setCreating(true)}><Plus size={16} /> New contest</Button>
+        </Card>
+      )}
+
+      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        {contests?.map((c, i) => (
+          <Link key={c.id} to={`/contests/${c.id}`} className="group">
+            <Card className="overflow-hidden p-0 transition group-hover:-translate-y-0.5 group-hover:shadow-lg">
+              <div className={`h-24 bg-gradient-to-br p-4 ${banners[i % banners.length]}`}>
+                <span className="rounded-full bg-white/20 px-2.5 py-1 text-xs font-semibold text-white">
+                  <Clock size={12} className="mr-1 inline" />
+                  {c.durationMinutes} min
+                </span>
+              </div>
+              <div className="p-5">
+                <h3 className="truncate font-bold">{c.title}</h3>
+                <div className="mt-3 flex gap-2">
+                  <Pill tone="blue">{c.questionCount} questions</Pill>
+                  <Pill tone="green">{c.studentCount} students</Pill>
+                </div>
+              </div>
+            </Card>
+          </Link>
+        ))}
+      </div>
+
+      {creating && (
+        <NewContestModal
+          onClose={() => setCreating(false)}
+          onCreated={() => {
+            setCreating(false)
+            load()
+          }}
+        />
+      )}
     </div>
   )
 }
