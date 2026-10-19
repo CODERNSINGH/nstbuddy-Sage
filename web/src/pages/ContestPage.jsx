@@ -4,10 +4,11 @@ import { Link, useNavigate, useParams } from 'react-router-dom'
 import { api } from '../lib/api.js'
 import { Button, Card, Pill } from '../components/ui.jsx'
 import LeaderboardTab from '../components/LeaderboardTab.jsx'
+import MonitorTab from '../components/MonitorTab.jsx'
 import QuestionsTab from '../components/QuestionsTab.jsx'
 import StudentsTab from '../components/StudentsTab.jsx'
 
-const TABS = ['Questions', 'Students', 'Leaderboard']
+const TABS = ['Questions', 'Students', 'Monitor', 'Leaderboard']
 
 export default function ContestPage() {
   const { id } = useParams()
@@ -84,6 +85,7 @@ export default function ContestPage() {
 
       {tab === 'Questions' && <QuestionsTab contestId={id} questions={questions} reload={load} />}
       {tab === 'Students' && <StudentsTab contestId={id} />}
+      {tab === 'Monitor' && <MonitorTab contestId={id} />}
       {tab === 'Leaderboard' && <LeaderboardTab contestId={id} />}
     </div>
   )
