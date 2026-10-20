@@ -20,8 +20,10 @@
   `electron/after-pack.cjs` removes the unused SwiftShader library (16 MB) before signing to keep the file small.
 - The installer is attached to a **GitHub Release** (not committed to git, which has a 100 MB file limit):
   `gh release create v1.0.0 app/release/NstBuddy-Sage-arm64.dmg --title "NstBuddy Sage 1.0.0"`.
-  To publish a new version, create a new release with the same file name; the website always links to `releases/latest`.
-- The website link lives in `web/src/lib/config.js`.
+  A new version = a new release with the same file name; the backend always fetches `releases/latest`.
+- **How the download button works:** it links to `<backend>/api/download/app`. The backend streams the file from GitHub,
+  so the browser starts the download immediately from our own address (no redirect, no GitHub page).
+  Source can be changed with `DOWNLOAD_SOURCE_URL`. Note: each download uses ~95 MB of Render outbound bandwidth.
 - Where students get it:
   1. On the contest link `/c/<contest>` **after they register** (or if they were already registered).
   2. Each admin's **download-only link** `/d/<code>` (dashboard, "App download link"). Share it anytime.
@@ -35,5 +37,23 @@ Pick one:
 2. **SMTP on port 2525** (e.g. Brevo): `SMTP_HOST=smtp-relay.brevo.com`, `SMTP_PORT=2525`, `SMTP_USER`, `SMTP_PASS`.
 3. A paid Render instance (SMTP ports open) with the Gmail settings.
 
-The Students tab shows **mail sent / mail failed** per student (hover a failed one for the reason) and a Resend button.
-Registration still succeeds if the mail fails; the student is told to ask the teacher to resend.
+**Check your setup:** log in to the website, the dashboard has an **Email setup** card. Press *Send test email to me*.
+If it fails you see the exact error plus advice (wrong App Password, blocked port, unverified Resend domain...).
+The backend log also prints `Mail: ...` at startup.
+
+**What happens when a student registers:** the first try is immediate. If it fails the student is told, the backend retries after
+1 and 5 minutes, and the Students tab shows *mail sent / mail failed* (hover for the reason) with a Resend button.
+Mails interrupted by a server restart are retried on the next start.
+
+Tips: Google App Passwords are shown with spaces, spaces are ignored. With Gmail, `MAIL_FROM` should use the same Gmail address as `SMTP_USER`.
+
+## Keep Render awake
+- The backend pings its own public address every 14 minutes (`src/keepAlive.js`, uses Render's `RENDER_EXTERNAL_URL`).
+- The website also pings `/api/health` when it opens, so a sleeping backend starts waking before the first click.
+- A service that is already asleep cannot ping itself. For extra safety add a free outside pinger (UptimeRobot, cron-job.org) calling `https://nstbuddy-sage.onrender.com/api/health` every 5-10 minutes.
+- A single free web service can run 24/7 within Render's 750 free hours per month.
+
+## Security notes
+- Rate limits: admin login/signup, exam login (per IP + email, so a class on one Wi-Fi is fine) and student registration (stops mass-mailing).
+- The exam deadline is enforced on the server: autosave is refused after time is up, and a late submit only counts answers saved before the deadline.
+- Student names are HTML-escaped in emails.

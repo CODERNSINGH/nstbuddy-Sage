@@ -1,6 +1,7 @@
 import { Router } from 'express'
 import { query } from '../db/pool.js'
 import { isEmail, makeAccessCode } from '../utils/helpers.js'
+import { rateLimit } from '../middleware/rateLimit.js'
 import { deliverCredentials } from '../utils/mailer.js'
 
 // No login needed: this is what students see when they open the share link
@@ -37,7 +38,10 @@ router.get('/contests/:slug', async (req, res) => {
   })
 })
 
-router.post('/contests/:slug/register', async (req, res) => {
+// A class shares one Wi-Fi IP, so this is generous. It only stops someone mass-mailing strangers.
+const registerLimit = rateLimit({ windowMs: 10 * 60 * 1000, max: 80 })
+
+router.post('/contests/:slug/register', registerLimit, async (req, res) => {
   const contest = await findContest(req.params.slug)
   if (!contest) return res.status(404).json({ error: 'This contest link is not valid' })
 
@@ -60,7 +64,7 @@ router.post('/contests/:slug/register', async (req, res) => {
   )
 
   // Registration always succeeds; we just report whether the email went out
-  const { sent } = await deliverCredentials({ registration, contest }, query)
+  const { sent } = await deliverCredentials({ registration, contest })
   res.status(201).json({ ok: true, emailSent: sent })
 })
 

@@ -15,6 +15,9 @@ export async function api(path, { method = 'GET', body } = {}) {
     body: body ? JSON.stringify(body) : undefined,
   })
   const data = await res.json().catch(() => ({}))
-  if (!res.ok) throw Object.assign(new Error(data.error || 'Something went wrong'), { status: res.status })
+  if (!res.ok) throw Object.assign(new Error([data.error, data.hint].filter(Boolean).join(' ') || 'Something went wrong'), { status: res.status })
   return data
 }
+
+// Render's free plan sleeps when idle. A quick ping on page load wakes it before the user clicks anything.
+export const wakeBackend = () => fetch(`${API_URL}/api/health`).catch(() => {})

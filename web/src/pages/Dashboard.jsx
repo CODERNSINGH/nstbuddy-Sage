@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { api } from '../lib/api.js'
 import { useAuth } from '../lib/auth.jsx'
+import MailSetupCard from '../components/MailSetupCard.jsx'
 import NewContestModal from '../components/NewContestModal.jsx'
 import { Button, Card, IconBox, Pill } from '../components/ui.jsx'
 
@@ -73,6 +74,8 @@ export default function Dashboard() {
         </div>
       </Card>
       )}
+
+      <MailSetupCard />
 
       <h2 className="mb-4 mt-12 text-xl font-bold tracking-tight">All contests</h2>
       {contests === null && <p className="text-slate-500">Loading...</p>}

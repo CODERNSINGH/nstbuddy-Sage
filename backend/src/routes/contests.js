@@ -2,7 +2,7 @@ import { Router } from 'express'
 import { query } from '../db/pool.js'
 import { requireAdmin } from '../middleware/auth.js'
 import { makeSlug } from '../utils/helpers.js'
-import { deliverCredentials } from '../utils/mailer.js'
+import { resendCredentials } from '../utils/mailer.js'
 import questionRoutes from './questions.js'
 
 const router = Router()
@@ -120,8 +120,8 @@ router.post('/:id/registrations/:regId/resend', findOwnContest, async (req, res)
     [req.params.regId, req.contest.id],
   )
   if (!registration) return res.status(404).json({ error: 'Student not found' })
-  const result = await deliverCredentials({ registration, contest: req.contest }, query)
-  if (!result.sent) return res.status(502).json({ error: `Email failed: ${result.error}` })
+  const result = await resendCredentials({ registration, contest: req.contest })
+  if (!result.sent) return res.status(502).json({ error: `Email failed: ${result.error}. ${result.hint}` })
   res.json({ ok: true })
 })
 

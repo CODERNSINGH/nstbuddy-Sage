@@ -79,7 +79,7 @@ export default function RegisterPage() {
                   <p className="mt-1 text-sm text-slate-600">
                     {emailSent
                       ? 'We emailed you a unique password (check spam too). Download the app below, open it and login with your email and that password.'
-                      : 'We could not send the password email right now. Please tell your teacher, they can resend it. You can already download the app below.'}
+                      : 'Your password email has not gone out yet. We keep retrying automatically, and your teacher can resend it too. You can already download the app below.'}
                   </p>
                 </div>
               ) : (

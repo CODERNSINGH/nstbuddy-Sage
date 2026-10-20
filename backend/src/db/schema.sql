@@ -63,3 +63,6 @@ CREATE UNIQUE INDEX IF NOT EXISTS admins_download_slug_key ON admins (download_s
 -- Did the password email reach the mail server? ('pending' | 'sent' | 'failed')
 ALTER TABLE registrations ADD COLUMN IF NOT EXISTS mail_status TEXT NOT NULL DEFAULT 'pending';
 ALTER TABLE registrations ADD COLUMN IF NOT EXISTS mail_error TEXT NOT NULL DEFAULT '';
+
+-- How many times we tried to send the password mail
+ALTER TABLE registrations ADD COLUMN IF NOT EXISTS mail_attempts INT NOT NULL DEFAULT 0;

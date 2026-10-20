@@ -1,3 +1,5 @@
-// Apple Silicon installer, attached to the latest GitHub Release of this repo.
-// To ship a new version: build with `npm run dist` in app/, then `gh release create vX.Y.Z app/release/NstBuddy-Sage-arm64.dmg`.
-export const DOWNLOAD_URL = 'https://github.com/CODERNSINGH/nstbuddy-Sage/releases/latest/download/NstBuddy-Sage-arm64.dmg'
+import { API_URL } from './api.js'
+
+// The Mac installer is a GitHub Release file. The backend streams it from GitHub, so the click
+// starts a download right away from our own address (no redirect, no GitHub page).
+export const DOWNLOAD_URL = `${API_URL}/api/download/app`

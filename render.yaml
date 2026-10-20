@@ -26,7 +26,7 @@ services:
       - key: MAIL_FROM
         sync: false
       - key: RESEND_API_KEY
-        sync: false # optional: send mail over HTTPS (Render free blocks SMTP ports)
+        sync: false # recommended on Render: send mail over HTTPS (free plan blocks SMTP ports)
 
   - type: web
     name: nstbuddy-sage-web
